@@ -64,12 +64,24 @@
 		foreach($patrolcarDispatched as $eachCarId) {
 			//echo $eachCarId . "<br>";
 			
-			$sql = "UPDATE `patrolcar` SET `patrolcar_status_id`=1 WHERE 'patrolcar_id' = '" . $eachCarId . "'";
+			$sql = "UPDATE `patrolcar` SET `patrolcar_status_id`=1 WHERE `patrolcar_id`='" . $eachCarId . "'";
 			$updateSuccess = $conn->query($sql);
 			
 			if($updateSuccess == false) {
 				echo "Error:" . $sql . "<br>" . $conn->error;				
 			}
+			
+			$sql = "INSERT INTO `dispatch`(`incident_id`, `patrolcar_id`, `time_dispatched`) VALUES (" . $incidentId . ",'" . $eachCarId . "',now())";
+			$insertDispatchSuccess = $conn->query($sql);
+			
+			if($insertDispatchSuccess == false) {
+				echo "Error:" . $sql . "<br>" . $conn->error;
+			}
+		}
+		$conn->close();
+		
+		if($insertDispatchSuccess == true && $updateSuccess == true && $insertDispatchSuccess == true)  {
+			header("location: logcall.php");
 		}
 	}
 ?>
